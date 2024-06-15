@@ -41,7 +41,8 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 #---------------loading the dataset and understanding the data --------------------#
 
 
-file_path = '/Users/HP/Desktop/credit_pcidss_data.xlsx'
+#file_path = '/Users/HP/Desktop/credit_pcidss_data.xlsx'
+file_path = '/Users/HP/Desktop/mod_credit_pcidss_data.xlsx'
 
 credit_pci_df = pd.read_excel(file_path)
 
@@ -170,5 +171,23 @@ class_report = classification_report(y_test, y_pred)
 print("Classification Report:")
 print(class_report)
 
+
+#---------------Creating a function for custom message prediction  ----------------------#
+
+input_text = input("please enter message to predict pci-dss compliance :")
+
+
+def predict_pcidss_compliance(input):
+    modified_txt = [preprocess_text(input)]
+    print(modified_txt)
+    variable_pcidss = tfidf_vectorizer.transform(modified_txt)
+    prediction_pcidss = dt_classifier.predict(variable_pcidss)
+
+    if prediction_pcidss == 1:
+        print (f'your message "{input}" is not following PCI-DSS(Payment Card Industry Data Security Standard) complaince ')
+    else: 
+        print (f'your message "{input}" is following PCI-DSS(Payment Card Industry Data Security Standard) complaince')
+
+predict_pcidss_compliance(input_text)
 
 
