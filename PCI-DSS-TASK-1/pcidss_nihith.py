@@ -39,6 +39,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
 from scipy.sparse import hstack
+from pymongo import MongoClient
 
 
 #---------------loading the dataset and understanding the data --------------------#
@@ -205,10 +206,10 @@ def predict_pcidss_compliance(input_text):
     combined_features = hstack([tfidf_features, [[contains_number_feature]]])
     prediction_pcidss = dt_classifier.predict(combined_features)
     if prediction_pcidss == 1:
-        prediction_msg =  f'your message "{input_text}" is not following PCI-DSS(Payment Card Industry Data Security Standard) complaince '
+        prediction_msg =  f'your message "{input_text}" is  not following PCI-DSS complaince '
 
     else: 
-        prediction_msg = f'your message "{input_text}" is following PCI-DSS(Payment Card Industry Data Security Standard) complaince'
+        prediction_msg = f'your message "{input_text}" is following PCI-DSS complaince'
 
     result = {
         "classification Report for Logistic Regression" : class_report_lr,
@@ -216,6 +217,7 @@ def predict_pcidss_compliance(input_text):
         "Text": input_text,
         "Prediction": prediction_msg
     }
+    print(prediction_msg)
     return result
 
     
@@ -229,7 +231,38 @@ json_file_name = 'pcidss_compliance_results.json'
 
 with open(json_file_name, 'w') as json_file:
     json.dump(rslt, json_file, indent=4)
-    print(f"the Output is Successfully saved  as {json_file_name} file in {file_path} ")
+    print(f"the Output is Successfully saved  as {json_file_name} file  ")
 
 
+
+#---------------Function to load JSON data into MongoDB----------------------#
+
+def load_json_to_mongodb(json_file_path, db_name, collection_name, mongo_uri="mongodb://localhost:27017"):
+    # Create a MongoDB client
+    client = MongoClient(mongo_uri)
+
+    # Access the database
+    db = client[db_name]
+
+    # Access the collection
+    collection = db[collection_name]
+
+    # Open the JSON file and load its contents
+    with open(json_file_path, 'r') as file:
+        data = json.load(file)
+
+        # If the JSON file contains an array of documents
+        if isinstance(data, list):
+            collection.insert_many(data)
+        else:
+            collection.insert_one(data)
+
+    print(f"Data from {json_file_path} has been successfully imported into the {db_name}.{collection_name} collection.")
+
+
+json_file_path = r'/Users/HP/Downloads/pcidss_compliance_results.json'  
+db_name = 'Eitacies_nn_db'
+collection_name = 'PCIDSS_collection'
+
+load_json_to_mongodb(json_file_path, db_name, collection_name)
 
