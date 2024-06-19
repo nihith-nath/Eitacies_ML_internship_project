@@ -37,12 +37,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
+from scipy.sparse import hstack
+
 
 #---------------loading the dataset and understanding the data --------------------#
 
 
 #file_path = '/Users/HP/Desktop/credit_pcidss_data.xlsx'
-file_path = '/Users/HP/Desktop/mod_credit_pcidss_data.xlsx'
+file_path = '/Users/HP/Desktop/credit_pcidss_data_v2.xlsx'
 
 credit_pci_df = pd.read_excel(file_path)
 
@@ -93,11 +95,21 @@ def preprocess_text(text):
     tokens = [word for word in tokens if word not in stop_words]
     return ' '.join(tokens)
 
+def contains_number(text):
+    return int(any(char.isdigit() for char in text))
+
+
+
 credit_pci_df['processed_message'] = credit_pci_df['message'].apply(preprocess_text)
+
+#-------------------Creating a new variable----------------------#
+
+
+credit_pci_df['contains_number'] = credit_pci_df['processed_message'].apply(contains_number)
 
 # Displaying the processed DataFrame
 
-print(credit_pci_df[['label', 'message', 'processed_message']].head(10))
+print(credit_pci_df[['label', 'message', 'processed_message','contains_number']].head(10))
 
 
 #-------------------TF- IDF----------------------#
@@ -125,10 +137,17 @@ X_tfidf = tfidf_vectorizer.fit_transform(text_data)
 
 print(X_tfidf)
 
+
+# Combine TF-IDF features with contains_number
+contains_number_feature = credit_pci_df['contains_number'].values.reshape(-1, 1)
+X_combined = hstack([X_tfidf, contains_number_feature])
+
+print(X_combined)
+
 #---------------performing Logistic regression----------------------#
 
 # Splitting data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X_tfidf, labels, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X_combined, labels, test_size=0.2, random_state=42)
 
 logreg = LogisticRegression()
 
@@ -174,20 +193,27 @@ print(class_report)
 
 #---------------Creating a function for custom message prediction  ----------------------#
 
-input_text = input("please enter message to predict pci-dss compliance :")
+Custom_input = input("please enter message to predict pci-dss compliance :")
 
 
-def predict_pcidss_compliance(input):
-    modified_txt = [preprocess_text(input)]
-    print(modified_txt)
-    variable_pcidss = tfidf_vectorizer.transform(modified_txt)
-    prediction_pcidss = dt_classifier.predict(variable_pcidss)
+def predict_pcidss_compliance(input_text):
+    processed_text = preprocess_text(input_text)
+    contains_number_feature = contains_number(processed_text)
+    tfidf_features = tfidf_vectorizer.transform([processed_text])
+    combined_features = hstack([tfidf_features, [[contains_number_feature]]])
+    prediction_pcidss = dt_classifier.predict(combined_features)
 
     if prediction_pcidss == 1:
-        print (f'your message "{input}" is not following PCI-DSS(Payment Card Industry Data Security Standard) complaince ')
+        print (f'your message "{input_text}" is not following PCI-DSS(Payment Card Industry Data Security Standard) complaince ')
     else: 
-        print (f'your message "{input}" is following PCI-DSS(Payment Card Industry Data Security Standard) complaince')
+        print (f'your message "{input_text}" is following PCI-DSS(Payment Card Industry Data Security Standard) complaince')
 
-predict_pcidss_compliance(input_text)
+predict_pcidss_compliance(Custom_input)
+
+
+
+
+
+
 
 
