@@ -20,6 +20,7 @@ It's a set of rules and guidelines that organizations that handle credit card in
 import pandas as pd
 import string
 import nltk
+import json
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -163,6 +164,7 @@ print(f"Test accuracy: {accuracy:.2f}")
 print("\nConfusion Matrix of Logistic regression:")
 print(confusion_matrix(y_test, y_pred))
 
+class_report_lr = classification_report(y_test, y_pred)
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred))
 
@@ -186,9 +188,9 @@ conf_matrix = confusion_matrix(y_test, y_pred)
 print("Confusion Matrix of decision tree:")
 print(conf_matrix)
 
-class_report = classification_report(y_test, y_pred)
+class_report_dt = classification_report(y_test, y_pred)
 print("Classification Report:")
-print(class_report)
+print(class_report_dt)
 
 
 #---------------Creating a function for custom message prediction  ----------------------#
@@ -202,18 +204,32 @@ def predict_pcidss_compliance(input_text):
     tfidf_features = tfidf_vectorizer.transform([processed_text])
     combined_features = hstack([tfidf_features, [[contains_number_feature]]])
     prediction_pcidss = dt_classifier.predict(combined_features)
-
     if prediction_pcidss == 1:
-        print (f'your message "{input_text}" is not following PCI-DSS(Payment Card Industry Data Security Standard) complaince ')
+        prediction_msg =  f'your message "{input_text}" is not following PCI-DSS(Payment Card Industry Data Security Standard) complaince '
+
     else: 
-        print (f'your message "{input_text}" is following PCI-DSS(Payment Card Industry Data Security Standard) complaince')
+        prediction_msg = f'your message "{input_text}" is following PCI-DSS(Payment Card Industry Data Security Standard) complaince'
 
-predict_pcidss_compliance(Custom_input)
+    result = {
+        "classification Report for Logistic Regression" : class_report_lr,
+        "classification Report for Decision Tree" : class_report_dt,
+        "Text": input_text,
+        "Prediction": prediction_msg
+    }
+    return result
+
+    
+
+rslt =predict_pcidss_compliance(Custom_input)
 
 
 
+#---------------Saving the result into a Json File ----------------------#
+json_file_name = 'pcidss_compliance_results.json'
 
-
+with open(json_file_name, 'w') as json_file:
+    json.dump(rslt, json_file, indent=4)
+    print(f"the Output is Successfully saved  as {json_file_name} file in {file_path} ")
 
 
 
