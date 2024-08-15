@@ -1,0 +1,27 @@
+[
+    {
+        "input_text": "women should not wear short clothes",
+        "prediction": "Yes",
+        "output": "The text 'women should not wear short clothes' has gender discrimination: Yes"
+    },
+    {
+        "input_text": "men are stronger than women",
+        "prediction": "Yes",
+        "output": "The text 'men are stronger than women' has gender discrimination: Yes"
+    },
+    {
+        "input_text": "everyone should have equal opportunities",
+        "prediction": "No",
+        "output": "The text 'everyone should have equal opportunities' has gender discrimination: No"
+    },
+    {
+        "input_text": "women should stay at home",
+        "prediction": "Yes",
+        "output": "The text 'women should stay at home' has gender discrimination: Yes"
+    },
+    {
+        "input_text": "men and women deserve equal pay",
+        "prediction": "No",
+        "output": "The text 'men and women deserve equal pay' has gender discrimination: No"
+    }
+]

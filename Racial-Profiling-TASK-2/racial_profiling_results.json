@@ -1,0 +1,37 @@
+[
+    {
+        "input_message": "he is a nigger",
+        "predicted_class": [
+            1
+        ],
+        "Prediction": "Your message \"he is a nigger\" has racial profiling."
+    },
+    {
+        "input_message": "we value equality in our company",
+        "predicted_class": [
+            0
+        ],
+        "Prediction": "Your message \"we value equality in our company\" is not racially profiled."
+    },
+    {
+        "input_message": "we can hire him as a new board member he is a mexican",
+        "predicted_class": [
+            1
+        ],
+        "Prediction": "Your message \"we can hire him as a new board member he is a mexican\" has racial profiling."
+    },
+    {
+        "input_message": "she has really good skills and was'nt selected based on race",
+        "predicted_class": [
+            0
+        ],
+        "Prediction": "Your message \"she has really good skills and was'nt selected based on race\" is not racially profiled."
+    },
+    {
+        "input_message": "indian accent is funny",
+        "predicted_class": [
+            0
+        ],
+        "Prediction": "Your message \"indian accent is funny\" is not racially profiled."
+    }
+]
