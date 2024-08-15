@@ -22,7 +22,7 @@ During my internship at EITACIES INC, I developed and deployed machine learning 
 ## Architecture
 The CONFSEC project architecture is designed for secure and efficient data processing. The machine learning engine processes data within a secure zone, and results are stored in MongoDB. The backend API securely interacts with the user interface via role-based access control (RBAC).
 
-![End-to-End Architecture](path/to/architecture-image.png)
+![End-to-End Architecture](E2E_architecture.png)
 
 ## Key Tasks
 ### 1. PCI DSS Detection Using Text
